@@ -130,6 +130,11 @@ static int rfcomm_handler_resp_ok_cb(struct rfcomm_conn *c, const struct bt_at *
 		return -1;
 	}
 
+	if (strcmp(at->value, "RING") == 0) {
+		debug("Received RING");
+		return 0;
+	}
+
 	return 0;
 }
 
@@ -238,6 +243,7 @@ static int rfcomm_handler_ciev_resp_cb(struct rfcomm_conn *c, const struct bt_at
 		switch (c->hfp_ind_map[index - 1]) {
 		case HFP_IND_CALL:
 		case HFP_IND_CALLSETUP:
+			debug("CALL comming in");
 			transport_send_signal(t->rfcomm.sco, TRANSPORT_PCM_OPEN);
 			break;
 		case HFP_IND_BATTCHG:
@@ -533,6 +539,7 @@ static rfcomm_callback *rfcomm_get_callback(const struct bt_at *at) {
 		&rfcomm_handler_bac_set,
 		&rfcomm_handler_iphoneaccev_set,
 		&rfcomm_handler_xapl_set,
+		&rfcomm_handler_resp_ok,
 	};
 
 	size_t i;
